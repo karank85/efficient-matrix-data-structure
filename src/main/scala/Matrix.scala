@@ -1,3 +1,5 @@
+import scala.collection.parallel.CollectionConverters._
+
 object Matrix {
 
   class Matrix(data: List[List[Int]]) {
@@ -14,13 +16,13 @@ object Matrix {
 
     def determinant: Int = ???
 
-    def isSymmetric: Boolean = ???
+    def isSymmetric: Boolean = transpose == this
 
-    def isSkew: Boolean = ???
+    def isSkew: Boolean = !(transpose == this)
 
     def entryAt(x: Int, y: Int): Int = ???
 
-    def isInvertible: Boolean = ???
+    def isInvertible: Boolean = determinant != 0
 
     def inverse: Matrix = ???
 
