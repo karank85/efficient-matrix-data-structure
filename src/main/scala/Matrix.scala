@@ -1,10 +1,11 @@
 import scala.collection.parallel.CollectionConverters._
+import scala.collection.mutable.ArrayBuffer
 
 object Matrix {
 
-  class Matrix(data: List[List[Int]]) {
+  class Matrix(data: ArrayBuffer[ArrayBuffer[Int]]) {
 
-    private val mt: List[List[Int]] = data;
+    private val mt: ArrayBuffer[ArrayBuffer[Int]] = data;
 
     def +(that: Matrix): Matrix = ???
 
@@ -20,11 +21,11 @@ object Matrix {
 
     def isSkew: Boolean = !(transpose == this)
 
-    def entryAt(x: Int, y: Int): Int = ???
+    def entryAt(x: Int, y: Int): Int = mt(x)(y)
 
     def isInvertible: Boolean = determinant != 0
 
-    def inverse: Matrix = ???
+    def inverse: Matrix = if isInvertible then this * createIdentity(mt.length) else this
 
     def createIdentity(n: Int): Matrix = ???
   }
