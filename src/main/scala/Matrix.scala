@@ -9,7 +9,20 @@ object Matrix extends App {
     private val m = mt.length
     private val n = mt.head.length
 
-    def +(that: Matrix): Matrix = ???
+    def +(that: Matrix): Matrix = {
+      if n == that.n && m == that.m then
+        val thatData = that.mt
+        val newMatrix: ArrayBuffer[ArrayBuffer[Int]] = ArrayBuffer.fill(m, n)(0)
+        (0 until m).par.foreach(i => {
+          (0 until n).par.foreach(j => {
+            newMatrix(i)(j) = mt(i)(j) + thatData(i)(j)
+          })
+        })
+        new Matrix(newMatrix)
+      else
+        throw Exception("Can't be added!")
+
+    }
 
     def *(that: Matrix): Matrix = {
       // check this.n == that.m
@@ -28,7 +41,18 @@ object Matrix extends App {
       else throw Exception("Can't be multiplied!")
     }
 
-    def ==(that: Matrix): Boolean = ???
+    def ==(that: Matrix): Boolean = {
+      if n != that.n || m != that.m then false
+      else
+        val thatData = that.mt
+        (0 until m).par.foreach(i => {
+          (0 until n).par.foreach(j => {
+            if mt(i)(j) != thatData(i)(j) then return false
+          })
+        })
+        true
+
+    }
 
     def transpose: Matrix = {
       val newMatrix: ArrayBuffer[ArrayBuffer[Int]] = ArrayBuffer.fill(m, n)(0)
@@ -60,18 +84,21 @@ object Matrix extends App {
   val mt1 = ArrayBuffer.fill(2048,2048)(1)
   val mt2 = ArrayBuffer.fill(2048,2048)(5)
   val mt3 = ArrayBuffer(ArrayBuffer(1,2),ArrayBuffer(3,4))
+  val mt4 = ArrayBuffer(ArrayBuffer(1,2),ArrayBuffer(3,4))
 
   val m1 = new Matrix(mt1)
   val m2 = new Matrix(mt2)
   val m3 = new Matrix(mt3)
+  val m4 = new Matrix(mt4)
 
 
   val start1 = System.nanoTime()
   //val res = m2*m1
-  val tranposed = m3.transpose
+  val addition = m3 + m4
   val end1 = (System.nanoTime()-start1)/1e9d
   println("Runtime: " + end1)
-  println(tranposed.getMatrixArray)
+  println(addition.getMatrixArray)
+  println(m3 == m1)
 
 
   //println((m2 * m1).getMatrixArray)
