@@ -30,7 +30,15 @@ object Matrix extends App {
 
     def ==(that: Matrix): Boolean = ???
 
-    def transpose: Matrix = ???
+    def transpose: Matrix = {
+      val newMatrix: ArrayBuffer[ArrayBuffer[Int]] = ArrayBuffer.fill(m, n)(0)
+      (0 until m).par.foreach(i => {
+        (0 until n).par.foreach(j => {
+            newMatrix(i)(j) = mt(j)(i)
+        })
+      })
+      new Matrix(newMatrix)
+    }
 
     def determinant: Int = ???
 
@@ -51,14 +59,19 @@ object Matrix extends App {
 
   val mt1 = ArrayBuffer.fill(2048,2048)(1)
   val mt2 = ArrayBuffer.fill(2048,2048)(5)
+  val mt3 = ArrayBuffer(ArrayBuffer(1,2),ArrayBuffer(3,4))
 
   val m1 = new Matrix(mt1)
   val m2 = new Matrix(mt2)
+  val m3 = new Matrix(mt3)
+
 
   val start1 = System.nanoTime()
-  val res = m2*m1
+  //val res = m2*m1
+  val tranposed = m3.transpose
   val end1 = (System.nanoTime()-start1)/1e9d
   println("Runtime: " + end1)
+  println(tranposed.getMatrixArray)
 
 
   //println((m2 * m1).getMatrixArray)
