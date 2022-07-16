@@ -3,28 +3,25 @@ import scala.collection.mutable.ArrayBuffer
 
 object Matrix extends App {
 
-  class Matrix(data: ArrayBuffer[ArrayBuffer[Int]]) {
+  class DenseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]) {
 
     private val mt: ArrayBuffer[ArrayBuffer[Int]] = data;
     private val m = mt.length
     private val n = mt.head.length
 
-    def +(that: Matrix): Matrix = {
+    def +(that: DenseMatrix): DenseMatrix = {
       if n == that.n && m == that.m then
         val thatData = that.mt
         val newMatrix: ArrayBuffer[ArrayBuffer[Int]] = ArrayBuffer.fill(m, n)(0)
         (0 until m).par.foreach(i => {
-          (0 until n).par.foreach(j => {
-            newMatrix(i)(j) = mt(i)(j) + thatData(i)(j)
-          })
+          (0 until n).par.foreach(j => newMatrix(i)(j) = mt(i)(j) + thatData(i)(j))
         })
-        new Matrix(newMatrix)
-      else
-        throw Exception("Can't be added!")
+        new DenseMatrix(newMatrix)
+      else throw Exception("Can't be added!")
 
     }
 
-    def *(that: Matrix): Matrix = {
+    def *(that: DenseMatrix): DenseMatrix = {
       // check this.n == that.m
       if n == that.m then
         val thatMatrix = that.mt
@@ -32,36 +29,30 @@ object Matrix extends App {
         val newMatrix: ArrayBuffer[ArrayBuffer[Int]] = ArrayBuffer.fill(m, that.n)(0)
         (0 until m).par.foreach(i => {
           (0 until n).par.foreach(j => {
-            (0 until that.n).par.foreach(k => {
-              newMatrix(i)(j) += mt(i)(k) * thatMatrix(k)(j)
-            })
+            (0 until that.n).par.foreach(k => newMatrix(i)(j) += mt(i)(k) * thatMatrix(k)(j))
           })
         })
-        new Matrix(newMatrix)
+        new DenseMatrix(newMatrix)
       else throw Exception("Can't be multiplied!")
     }
 
-    def ==(that: Matrix): Boolean = {
+    def ==(that: DenseMatrix): Boolean = {
       if n != that.n || m != that.m then false
       else
         val thatData = that.mt
         (0 until m).par.foreach(i => {
-          (0 until n).par.foreach(j => {
-            if mt(i)(j) != thatData(i)(j) then return false
-          })
+          (0 until n).par.foreach(j => if mt(i)(j) != thatData(i)(j) then return false)
         })
         true
 
     }
 
-    def transpose: Matrix = {
+    def transpose: DenseMatrix = {
       val newMatrix: ArrayBuffer[ArrayBuffer[Int]] = ArrayBuffer.fill(m, n)(0)
       (0 until m).par.foreach(i => {
-        (0 until n).par.foreach(j => {
-            newMatrix(i)(j) = mt(j)(i)
-        })
+        (0 until n).par.foreach(j => newMatrix(i)(j) = mt(j)(i))
       })
-      new Matrix(newMatrix)
+      new DenseMatrix(newMatrix)
     }
 
     def determinant: Int = ???
@@ -74,11 +65,19 @@ object Matrix extends App {
 
     def isInvertible: Boolean = determinant != 0
 
-    def inverse: Matrix = if isInvertible then this * createIdentity(mt.length) else this
+    def inverse: DenseMatrix = if isInvertible then this * createIdentity(mt.length) else this
 
-    def createIdentity(n: Int): Matrix = ???
+    def createIdentity(n: Int): DenseMatrix = ???
 
     def getMatrixArray: ArrayBuffer[ArrayBuffer[Int]] = mt
+  }
+
+  class SparseMatrices(data: ArrayBuffer[ArrayBuffer[Int]]) {
+
+    private val mt: ArrayBuffer[ArrayBuffer[Int]] = data;
+    private val m = mt.length
+    private val n = mt.head.length
+
   }
 
   val mt1 = ArrayBuffer.fill(2048,2048)(1)
@@ -86,10 +85,10 @@ object Matrix extends App {
   val mt3 = ArrayBuffer(ArrayBuffer(1,2),ArrayBuffer(3,4))
   val mt4 = ArrayBuffer(ArrayBuffer(1,2),ArrayBuffer(3,4))
 
-  val m1 = new Matrix(mt1)
-  val m2 = new Matrix(mt2)
-  val m3 = new Matrix(mt3)
-  val m4 = new Matrix(mt4)
+  val m1 = new DenseMatrix(mt1)
+  val m2 = new DenseMatrix(mt2)
+  val m3 = new DenseMatrix(mt3)
+  val m4 = new DenseMatrix(mt4)
 
 
   val start1 = System.nanoTime()
