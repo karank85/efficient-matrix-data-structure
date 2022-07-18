@@ -77,23 +77,58 @@ object Matrix extends App {
         throw Exception("Matrix is not invertible!")
     }
 
-    def createIdentity(n: Int): DenseMatrix = ???
+    def createIdentity(k: Int): DenseMatrix = {
+      val res = ArrayBuffer.tabulate(k)(j => ArrayBuffer.tabulate(k)(i => if i == k then 1 else 0))
+      DenseMatrix(res)
+    }
 
     def getMatrixArray: ArrayBuffer[ArrayBuffer[Int]] = mt
   }
 
   class SparseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]) {
 
-    private val m = data.length
-    private val n = data.head.length
-    private val size = data.par.map(_.par.count(_ != 0)).sum
-    private val mt = computeSparseMatrix
+    private val size = data.head.length
+    private val mt = data
 
-    def computeSparseMatrix: ArrayBuffer[ArrayBuffer[Int]] = {
-      val mt = ArrayBuffer.fill(3,size)(0)
+    def +(that: SparseMatrix): SparseMatrix = ???
+
+    def *(that: SparseMatrix): SparseMatrix = ???
+
+    def ==(that: SparseMatrix): Boolean = {
+      if size != that.size then return false
+      else
+        (0 until size).par.foreach(i => {
+          val thatMT = that.mt; val thisRow = mt(i)(0); val thisCol = mt(i)(1); val thisValue = mt(i)(2)
+          val thatRow = thatMT(i)(0); val thatCol = thatMT(i)(1); val thatValue = thatMT(i)(2)
+          if (thisRow != thatRow || thisCol != thatCol || thisValue != thatValue) return false
+        })
+      true
+    }
+
+    def determinant: Int = ???
+
+    def transpose: SparseMatrix = ???
+
+    def entryAt(x: Int, y: Int): Int = ???
+
+    def isSymmetric: Boolean = transpose == this
+
+    def isSkew: Boolean = !(transpose == this)
+
+    def getMatrixArray: ArrayBuffer[ArrayBuffer[Int]] = mt
+
+  }
+
+  object SparseMatrix {
+
+    def computeSparseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]): ArrayBuffer[ArrayBuffer[Int]] = {
+      val m = data.length
+      val n = data.head.length
+      val size = data.par.map(_.par.count(_ != 0)).sum
+      val mt = ArrayBuffer.fill(3, size)(0)
       val counter = AtomicInteger(0)
-      (0 until m).par.foreach(i => {
-        (0 until n).par.foreach(j =>{
+      (0 until m).foreach(i => {
+        (0 until n).foreach(j => {
           val elem = data(i)(j)
           if elem != 0 then
             val row = counter.get()
@@ -104,11 +139,7 @@ object Matrix extends App {
         })
       })
       mt
-
     }
-
-    def getMatrixArray: ArrayBuffer[ArrayBuffer[Int]] = mt
-
   }
 
 
