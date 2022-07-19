@@ -1,4 +1,6 @@
 import java.util.concurrent.atomic.AtomicInteger
+import scala.collection.mutable
+import scala.collection.mutable.Map
 import scala.collection.parallel.CollectionConverters.*
 import scala.collection.mutable.ArrayBuffer
 
@@ -85,60 +87,61 @@ object Matrix extends App {
     def getMatrixArray: ArrayBuffer[ArrayBuffer[Int]] = mt
   }
 
-  class SparseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]) {
+  class SparseMatrix(data: mutable.Map[(Int,Int),Int], n: Int, m: Int) {
 
-    private val size = data.head.length
+    private val size = data.size
+    private val colSize = n
+    private val rowSize = m
     private val mt = data
 
     def +(that: SparseMatrix): SparseMatrix = ???
 
     def *(that: SparseMatrix): SparseMatrix = ???
 
-    def ==(that: SparseMatrix): Boolean = {
-      if size != that.size then return false
-      else
-        (0 until size).par.foreach(i => {
-          val thatMT = that.mt; val thisRow = mt(i)(0); val thisCol = mt(i)(1); val thisValue = mt(i)(2)
-          val thatRow = thatMT(i)(0); val thatCol = thatMT(i)(1); val thatValue = thatMT(i)(2)
-          if (thisRow != thatRow || thisCol != thatCol || thisValue != thatValue) return false
-        })
-      true
-    }
+    def ==(that: SparseMatrix): Boolean = ???
 
     def determinant: Int = ???
 
-    def transpose: SparseMatrix = ???
+    def transpose: SparseMatrix = {
+      val lst = mt.par
+      val transposed = lst.map(i => {
+        val ((r, c), e) = i
+        (c, r) -> e
+      })
+      val output = mutable.Map() ++ transposed
+      new SparseMatrix(output, rowSize, colSize)
+    }
 
-    def entryAt(x: Int, y: Int): Int = ???
+    def entryAt(row: Int, col: Int): Int = {
+      val tup = (row,col)
+      val elem = mt.get(tup)
+      elem match {
+        case Some(i) => i;
+        case _ => throw Error("Index doesn't exist")
+      }
+    }
 
     def isSymmetric: Boolean = transpose == this
 
     def isSkew: Boolean = !(transpose == this)
 
-    def getMatrixArray: ArrayBuffer[ArrayBuffer[Int]] = mt
+    def getMatrix: mutable.Map[(Int,Int),Int] = mt
 
   }
 
   object SparseMatrix {
 
-    def computeSparseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]): ArrayBuffer[ArrayBuffer[Int]] = {
+    def computeSparseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]): mutable.Map[(Int,Int), Int] = {
       val m = data.length
       val n = data.head.length
-      val size = data.par.map(_.par.count(_ != 0)).sum
-      val mt = ArrayBuffer.fill(3, size)(0)
-      val counter = AtomicInteger(0)
+      val mp = mutable.Map[(Int,Int),Int]()
       (0 until m).foreach(i => {
         (0 until n).foreach(j => {
           val elem = data(i)(j)
-          if elem != 0 then
-            val row = counter.get()
-            mt(0)(row) = i
-            mt(1)(row) = j
-            mt(2)(row) = elem
-            counter.getAndIncrement()
+          if data(i)(j) != 0 then mp.addOne((i,j) -> elem)
         })
       })
-      mt
+      mp
     }
   }
 
@@ -155,10 +158,11 @@ object Matrix extends App {
 
   val sm1 = ArrayBuffer(ArrayBuffer(0,0,3,0,4),ArrayBuffer(0,0,5,7,0),ArrayBuffer(0,0,0,0,0),ArrayBuffer(0,2,6,0,0))
 
-  val s1 = new SparseMatrix(sm1)
+  val s1 = new SparseMatrix(SparseMatrix.computeSparseMatrix(sm1), sm1.head.length, sm1.length)
 
   println(sm1)
-  println(s1.getMatrixArray)
+  println(s1.getMatrix)
+  println(s1.transpose.getMatrix)
 
 
   val start1 = System.nanoTime()
