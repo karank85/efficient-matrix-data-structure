@@ -94,20 +94,38 @@ object Matrix extends App {
     private val rowSize = m
     private val mt = data
 
-    def +(that: SparseMatrix): SparseMatrix = ???
+    def +(that: SparseMatrix): SparseMatrix = {
+      val thatCol = that.colSize; val thatRow = that.rowSize; val thatSize = that.size; val thatMatrix = that.mt
+      if colSize != thatCol || thatRow != rowSize || size != thatSize then throw Error("Can't add!")
+      val lst = mt.par
+      val addedDuplicates = lst.map(i =>
+        val ((r, c), e) = i
+        if thatMatrix.contains((r,c)) then
+          (r,c) -> (e + thatMatrix((r,c)))
+        else
+          (r, c) -> e
+      )
+      val output = thatMatrix.par.filter((k,v) => !thatMatrix.contains(k))
+
+      new SparseMatrix(mutable.Map() ++ output ++ addedDuplicates, n, m)
+    }
 
     def *(that: SparseMatrix): SparseMatrix = ???
 
-    def ==(that: SparseMatrix): Boolean = ???
+    def ==(that: SparseMatrix): Boolean = {
+      val thatCol = that.colSize; val thatRow = that.rowSize; val thatSize = that.size; val thatMatrix = that.mt
+      if colSize != thatCol || thatRow != rowSize || size != thatSize then false
+      else mt == thatMatrix
+    }
 
     def determinant: Int = ???
 
     def transpose: SparseMatrix = {
       val lst = mt.par
-      val transposed = lst.map(i => {
+      val transposed = lst.map(i =>
         val ((r, c), e) = i
         (c, r) -> e
-      })
+      )
       val output = mutable.Map() ++ transposed
       new SparseMatrix(output, rowSize, colSize)
     }
@@ -117,7 +135,7 @@ object Matrix extends App {
       val elem = mt.get(tup)
       elem match {
         case Some(i) => i;
-        case _ => throw Error("Index doesn't exist")
+        case _ => if row < rowSize && col < colSize then 0 else throw Error("Index out of bounds!")
       }
     }
 
@@ -138,7 +156,7 @@ object Matrix extends App {
       (0 until m).foreach(i => {
         (0 until n).foreach(j => {
           val elem = data(i)(j)
-          if data(i)(j) != 0 then mp.addOne((i,j) -> elem)
+          if elem != 0 then mp.addOne((i,j) -> elem)
         })
       })
       mp
@@ -156,13 +174,17 @@ object Matrix extends App {
   val m3 = new DenseMatrix(mt3)
   val m4 = new DenseMatrix(mt4)
 
-  val sm1 = ArrayBuffer(ArrayBuffer(0,0,3,0,4),ArrayBuffer(0,0,5,7,0),ArrayBuffer(0,0,0,0,0),ArrayBuffer(0,2,6,0,0))
+  val sm1 = ArrayBuffer(ArrayBuffer(0,0,3,0,4),ArrayBuffer(0,0,5,7,0),ArrayBuffer(0,0,1,1,0),ArrayBuffer(0,2,6,0,0))
+  val sm2 = ArrayBuffer(ArrayBuffer(0,0,3,0,4),ArrayBuffer(0,0,5,7,0),ArrayBuffer(0,0,0,1,1),ArrayBuffer(0,2,6,0,0))
 
   val s1 = new SparseMatrix(SparseMatrix.computeSparseMatrix(sm1), sm1.head.length, sm1.length)
+  val s2 = new SparseMatrix(SparseMatrix.computeSparseMatrix(sm2), sm2.head.length, sm2.length)
 
-  println(sm1)
   println(s1.getMatrix)
-  println(s1.transpose.getMatrix)
+  //println(s1.transpose.getMatrix)
+  println(s2.getMatrix)
+  //println(s2.transpose.getMatrix)
+  println((s1 + s2).getMatrix)
 
 
   val start1 = System.nanoTime()
