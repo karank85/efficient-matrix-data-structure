@@ -1,5 +1,7 @@
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 import scala.collection.mutable
+import scala.jdk.CollectionConverters._
 import scala.collection.mutable.Map
 import scala.collection.parallel.CollectionConverters.*
 import scala.collection.mutable.ArrayBuffer
@@ -110,7 +112,23 @@ object Matrix extends App {
       new SparseMatrix(mutable.Map() ++ output ++ addedDuplicates, n, m)
     }
 
-    def *(that: SparseMatrix): SparseMatrix = ???
+    def *(that: SparseMatrix): SparseMatrix = {
+      if colSize != that.rowSize then
+        throw Exception("Can't be multiplied!")
+      else
+        val thatMT = that.getMatrix
+        val output = new ConcurrentHashMap[(Int,Int),AtomicInteger]()
+        (0 until rowSize).par.foreach(i => {
+          (0 until that.colSize).par.foreach(j => {
+            (0 until that.rowSize).par.foreach(k => {
+              if mt.contains((i,k)) && thatMT.contains((k,j)) then
+                this.synchronized(output.put((i,j), AtomicInteger(output.getOrDefault((i,j),AtomicInteger(0)).addAndGet(mt(i,k)*thatMT(k,j)))))
+            })
+          })
+        })
+
+        SparseMatrix(mutable.Map() ++ output.asScala.keySet.map(s => s -> output.get(s).get()).toMap, rowSize, that.colSize)
+    }
 
     def ==(that: SparseMatrix): Boolean = {
       val thatCol = that.colSize; val thatRow = that.rowSize; val thatSize = that.size; val thatMatrix = that.mt
@@ -168,14 +186,20 @@ object Matrix extends App {
   val mt2 = ArrayBuffer.fill(2048,2048)(5)
   val mt3 = ArrayBuffer.tabulate(50)(i => ArrayBuffer.tabulate(30)(j => (i+1)*(j+2)))
   val mt4 = ArrayBuffer.tabulate(50)(i => ArrayBuffer.tabulate(30)(j => i+j))
+  val mt5 = ArrayBuffer(ArrayBuffer(1,2,3),ArrayBuffer(1,1,7),ArrayBuffer(1,12,3))
+  val mt6 = ArrayBuffer(ArrayBuffer(1,0),ArrayBuffer(0,1))
+  val mt7 = ArrayBuffer(ArrayBuffer(0,1),ArrayBuffer(1,0))
 
   val m1 = new DenseMatrix(mt1)
   val m2 = new DenseMatrix(mt2)
   val m3 = new DenseMatrix(mt3)
   val m4 = new DenseMatrix(mt4)
+  val m5 = new DenseMatrix(mt5)
+  val m6 = new DenseMatrix(mt6)
+  val m7 = new DenseMatrix(mt7)
 
-  val sm1 = ArrayBuffer(ArrayBuffer(0,0,3,0,4),ArrayBuffer(0,0,5,7,0),ArrayBuffer(0,0,1,1,0),ArrayBuffer(0,2,6,0,0))
-  val sm2 = ArrayBuffer(ArrayBuffer(0,0,3,0,4),ArrayBuffer(0,0,5,7,0),ArrayBuffer(0,0,0,1,1),ArrayBuffer(0,2,6,0,0))
+  val sm1 = ArrayBuffer(ArrayBuffer(1,1),ArrayBuffer(1,1))
+  val sm2 = ArrayBuffer(ArrayBuffer(3),ArrayBuffer(4))
 
   val s1 = new SparseMatrix(SparseMatrix.computeSparseMatrix(sm1), sm1.head.length, sm1.length)
   val s2 = new SparseMatrix(SparseMatrix.computeSparseMatrix(sm2), sm2.head.length, sm2.length)
@@ -184,18 +208,21 @@ object Matrix extends App {
   //println(s1.transpose.getMatrix)
   println(s2.getMatrix)
   //println(s2.transpose.getMatrix)
-  println((s1 + s2).getMatrix)
+  //println((s1 + s2).getMatrix)
 
 
   val start1 = System.nanoTime()
-  val addition = m3 + m4
+  val addition = m6 == m7
+  println(addition)
   val end1 = (System.nanoTime()-start1)/1e9d
+
+  println((s1 * s2).getMatrix)
   //println("Runtime: " + end1)
   //println(addition.getMatrixArray)
 
 
   //println(m3 == m1)
-  //println(m3.determinant)
+  println(m5.determinant)
 
 
 
