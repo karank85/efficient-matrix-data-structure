@@ -18,11 +18,12 @@ object Matrix extends App {
       if n == that.n && m == that.m then
         val thatData = that.mt
         val newMatrix: ArrayBuffer[ArrayBuffer[Int]] = ArrayBuffer.fill(m, n)(0)
-        (0 until m).par.map(i => {
-          (0 until n).par.map(j => newMatrix(i)(j) = mt(i)(j) + thatData(i)(j))
+        (0 until m).par.foreach(i => {
+          (0 until n).par.foreach(j => newMatrix(i)(j) = mt(i)(j) + thatData(i)(j))
         })
         new DenseMatrix(newMatrix)
       else throw Exception("Can't be added!")
+
     }
 
     def *(that: DenseMatrix): DenseMatrix = {
@@ -44,15 +45,16 @@ object Matrix extends App {
       if n != that.n || m != that.m then false
       else
         val thatData = that.mt
-        (0 until m).par.forall(i => {
-          (0 until n).par.forall(j => mt(i)(j) == thatData(i)(j))
+        (0 until m).par.foreach(i => {
+          (0 until n).par.foreach(j => if mt(i)(j) != thatData(i)(j) then return false)
         })
+        true
     }
 
     def transpose: DenseMatrix = {
       val newMatrix: ArrayBuffer[ArrayBuffer[Int]] = ArrayBuffer.fill(m, n)(0)
-      (0 until m).par.map(i => {
-        (0 until n).par.map(j => newMatrix(i)(j) = mt(j)(i))
+      (0 until m).par.foreach(i => {
+        (0 until n).par.foreach(j => newMatrix(i)(j) = mt(j)(i))
       })
       new DenseMatrix(newMatrix)
     }
@@ -185,8 +187,8 @@ object Matrix extends App {
   val mt3 = ArrayBuffer.tabulate(50)(i => ArrayBuffer.tabulate(30)(j => (i+1)*(j+2)))
   val mt4 = ArrayBuffer.tabulate(50)(i => ArrayBuffer.tabulate(30)(j => i+j))
   val mt5 = ArrayBuffer(ArrayBuffer(1,2,3),ArrayBuffer(1,1,7),ArrayBuffer(1,12,3))
-  val mt6 = ArrayBuffer(ArrayBuffer(1,0,8),ArrayBuffer(0,1,8),ArrayBuffer(1,1,3))
-  val mt7 = ArrayBuffer(ArrayBuffer(0,1,3),ArrayBuffer(1,0,9),ArrayBuffer(1,1,9))
+  val mt6 = ArrayBuffer(ArrayBuffer(1,0),ArrayBuffer(0,1))
+  val mt7 = ArrayBuffer(ArrayBuffer(0,1),ArrayBuffer(1,0))
 
   val m1 = new DenseMatrix(mt1)
   val m2 = new DenseMatrix(mt2)
@@ -210,9 +212,8 @@ object Matrix extends App {
 
 
   val start1 = System.nanoTime()
-  val addition = m6 + m7
-  println(m6.transpose.getMatrixArray)
-  println(addition.getMatrixArray)
+  val addition = m6 == m7
+  println(addition)
   val end1 = (System.nanoTime()-start1)/1e9d
 
   println((s1 * s2).getMatrix)
@@ -221,7 +222,7 @@ object Matrix extends App {
 
 
   //println(m3 == m1)
-  //println(m5.determinant)
+  println(m5.determinant)
 
 
 
