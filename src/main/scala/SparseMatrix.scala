@@ -5,7 +5,7 @@ import scala.jdk.CollectionConverters._
 import scala.collection.parallel.CollectionConverters.*
 import scala.collection.mutable.ArrayBuffer
 
-class SparseMatrix(data: mutable.Map[(Int,Int),Int], n: Int, m: Int) {
+class SparseMatrix(data: Map[(Int,Int),Int], n: Int, m: Int) {
 
   private val size = data.size
   private val colSize = n
@@ -30,7 +30,7 @@ class SparseMatrix(data: mutable.Map[(Int,Int),Int], n: Int, m: Int) {
     )
     val output = thatMatrix.par.filter((k,v) => !thatMatrix.contains(k))
 
-    new SparseMatrix(mutable.Map() ++ output ++ addedDuplicates, n, m)
+    new SparseMatrix(Map() ++ output ++ addedDuplicates, n, m)
   }
 
   /**
@@ -53,7 +53,7 @@ class SparseMatrix(data: mutable.Map[(Int,Int),Int], n: Int, m: Int) {
         })
       })
 
-      SparseMatrix(mutable.Map() ++ output.asScala.keySet.par.map(s => s -> output.get(s).get()).toMap, rowSize, that.colSize)
+      SparseMatrix(Map() ++ output.asScala.keySet.par.map(s => s -> output.get(s).get()).toMap, rowSize, that.colSize)
   }
 
   /**
@@ -90,7 +90,7 @@ class SparseMatrix(data: mutable.Map[(Int,Int),Int], n: Int, m: Int) {
       val ((r, c), e) = i
       (c, r) -> e
     )
-    val output = mutable.Map() ++ transposed
+    val output = Map() ++ transposed
     new SparseMatrix(output, rowSize, colSize)
   }
 
@@ -125,7 +125,7 @@ class SparseMatrix(data: mutable.Map[(Int,Int),Int], n: Int, m: Int) {
   def isSkew: Boolean = !(transpose == this)
 
   /** Gets the sparse matrix data in DOK representation */
-  def getMatrix: mutable.Map[(Int,Int),Int] = mt
+  def getMatrix: Map[(Int,Int),Int] = mt
 
 }
 

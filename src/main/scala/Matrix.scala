@@ -2,7 +2,6 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 import scala.collection.mutable
 import scala.jdk.CollectionConverters._
-import scala.collection.mutable.Map
 import scala.collection.parallel.CollectionConverters.*
 import scala.collection.mutable.ArrayBuffer
 
@@ -10,7 +9,7 @@ object Matrix extends App {
 
   object SparseMatrix {
 
-    def computeSparseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]): mutable.Map[(Int,Int), Int] = {
+    def computeSparseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]): Map[(Int,Int), Int] = {
       val m = data.length
       val n = data.head.length
       val mp = mutable.Map[(Int,Int),Int]()
@@ -20,7 +19,7 @@ object Matrix extends App {
           if elem != 0 then mp.addOne((i,j) -> elem)
         })
       })
-      mp
+      mp.toMap
     }
   }
 
