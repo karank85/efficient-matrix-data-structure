@@ -4,48 +4,48 @@
 
 ## **Goal / How will I measure success:**
 
-● Have a greater understanding of OOP & Functional Programming in Scala.
+  ● Have a greater understanding of OOP & Functional Programming in Scala.
 
-● Improve general linear algebra knowledge.
+  ● Improve general linear algebra knowledge.
 
-● Sharpen skills in multithreading and asynchronous programming.
+  ● Sharpen skills in multithreading and asynchronous programming.
 
-● Able to implement a simple data structure with working and efficient matrix
+  ● Able to implement a simple data structure with working and efficient matrix
 operations with clean and readable code.
 
-● Able to Implement most of the complicated operations in parallel or
+  ● Able to Implement most of the complicated operations in parallel or
 asynchronous
 
 ## **Matrix operations that are planned to be implemented / Rough plan:**
 
 The operations will be implemented for Sparse matrices and Dense matrices
 
-● addition = add two matrices
+  ● addition = add two matrices
 
-● multiplication = multiply two matrices
+  ● multiplication = multiply two matrices
 
-● transpose = transpose a matrix
+  ● transpose = transpose a matrix
 
-● isSymmetric = is a matrix symmetric
+  ● isSymmetric = is a matrix symmetric
 
-● isSkew = is a matrix skew
+  ● isSkew = is a matrix skew
 
-● trace = find the trace of a matrix
+  ● trace = find the trace of a matrix
 
-● determinant = find the determinant of a matrix
+  ● determinant = find the determinant of a matrix
 
-● entryAt(x,y) = get an element of a matrix on row y column x
+  ● entryAt(x,y) = get an element of a matrix on row y column x
 
-● isInvertible = is the matrix invertible
+  ● isInvertible = is the matrix invertible
 
-● inverse = find the inverse of a matrix
+  ● inverse = find the inverse of a matrix
 
-● createIdentity(n) = create identity matrix with certain size
+  ● createIdentity(n) = create identity matrix with certain size
 
 ## **Application / Areas where this can be used for greater performance:**
 
-● Video games.
+  ● Video games.
 
-● Rendering 3D simulations.
+  ● Rendering 3D simulations.
 
-● Research in various science fields
+  ● Research in various science fields
