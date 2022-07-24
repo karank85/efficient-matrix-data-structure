@@ -147,5 +147,5 @@ class DenseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]) {
   }
 
   /** Returns the matrix data array */
-  def getMatrixArray: ArrayBuffer[ArrayBuffer[Int]] = mt
+  def getMatrix: ArrayBuffer[ArrayBuffer[Int]] = mt
 }

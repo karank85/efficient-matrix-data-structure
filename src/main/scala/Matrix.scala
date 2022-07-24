@@ -56,7 +56,7 @@ object Matrix extends App {
 
   val start1 = System.nanoTime()
   val addition = m6 + m7
-  println(addition.getMatrixArray)
+  println(addition.getMatrix)
   val end1 = (System.nanoTime()-start1)/1e9d
 
   println((s1 * s2).getMatrix)
@@ -66,8 +66,8 @@ object Matrix extends App {
 
   //println(m3 == m1)
   println(m5.determinant)
-  println(m5.inverse.getMatrixArray)
-  println(m5.transpose.getMatrixArray)
+  println(m5.inverse.getMatrix)
+  println(m5.transpose.getMatrix)
 
   //println((m2 * m1).getMatrixArray)
 

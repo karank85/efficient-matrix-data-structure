@@ -12,6 +12,11 @@ class SparseMatrix(data: mutable.Map[(Int,Int),Int], n: Int, m: Int) {
   private val rowSize = m
   private val mt = data
 
+  /**
+   * Adds two sparse matrix together
+   * @param that the other sparse matrix being added to
+   * @return added sparse matrix of two sparse matrices
+   */
   def +(that: SparseMatrix): SparseMatrix = {
     val thatCol = that.colSize; val thatRow = that.rowSize; val thatSize = that.size; val thatMatrix = that.mt
     if colSize != thatCol || thatRow != rowSize || size != thatSize then throw Error("Can't add!")
@@ -28,6 +33,11 @@ class SparseMatrix(data: mutable.Map[(Int,Int),Int], n: Int, m: Int) {
     new SparseMatrix(mutable.Map() ++ output ++ addedDuplicates, n, m)
   }
 
+  /**
+   * Multiply two sparse matrix together
+   * @param that the other sparse matrix being multiplied to
+   * @return multiplied sparse matrix of two sparse matrices
+   */
   def *(that: SparseMatrix): SparseMatrix = {
     if colSize != that.rowSize then
       throw Exception("Can't be multiplied!")
@@ -46,12 +56,21 @@ class SparseMatrix(data: mutable.Map[(Int,Int),Int], n: Int, m: Int) {
       SparseMatrix(mutable.Map() ++ output.asScala.keySet.par.map(s => s -> output.get(s).get()).toMap, rowSize, that.colSize)
   }
 
+  /**
+   * Checks if two sparse matrices are equal
+   * @param that the other sparse matrix being compared two
+   * @return boolean of if two sparse matrices are equal
+   */
   def ==(that: SparseMatrix): Boolean = {
     val thatCol = that.colSize; val thatRow = that.rowSize; val thatSize = that.size; val thatMatrix = that.mt
     if colSize != thatCol || thatRow != rowSize || size != thatSize then false
     else mt == thatMatrix
   }
 
+  /**
+   * Gets the determinant of sparse matrices
+   * @return determinant of sparse matrix
+   */
   def determinant: Int = {
     val dm = (0 until rowSize).par.map(i => {
       (0 until colSize).par.map(j => {
@@ -61,6 +80,10 @@ class SparseMatrix(data: mutable.Map[(Int,Int),Int], n: Int, m: Int) {
     DenseMatrix(dm).determinant
   }
 
+  /**
+   * Transpose sparse matrices
+   * @return transposed sparse matrix
+   */
   def transpose: SparseMatrix = {
     val lst = mt.par
     val transposed = lst.map(i =>
@@ -71,6 +94,13 @@ class SparseMatrix(data: mutable.Map[(Int,Int),Int], n: Int, m: Int) {
     new SparseMatrix(output, rowSize, colSize)
   }
 
+  /**
+   * Gets the element in specified at a coordinate
+   * @param row row coordinate
+   * @param col col coordinate
+   * @return element on the specific coordinate if its within the bounds
+   *         else throw error
+   */
   def entryAt(row: Int, col: Int): Int = {
     val tup = (row,col)
     val elem = mt.get(tup)
@@ -82,10 +112,19 @@ class SparseMatrix(data: mutable.Map[(Int,Int),Int], n: Int, m: Int) {
     }
   }
 
+  /**
+   * Checks if the sparse matrix is symmetric
+   * @return boolean if sparse matrix is symmetric
+   */
   def isSymmetric: Boolean = transpose == this
 
+  /**
+   * Checks if the sparse matrix is skew
+   * @return boolean if sparse matrix is skew
+   */
   def isSkew: Boolean = !(transpose == this)
 
+  /** Gets the sparse matrix data in DOK representation */
   def getMatrix: mutable.Map[(Int,Int),Int] = mt
 
 }
