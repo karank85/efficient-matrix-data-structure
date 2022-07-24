@@ -45,10 +45,9 @@ object Matrix extends App {
       if n != that.n || m != that.m then false
       else
         val thatData = that.mt
-        (0 until m).par.foreach(i => {
-          (0 until n).par.foreach(j => if mt(i)(j) != thatData(i)(j) then return false)
+        (0 until m).par.forall(i => {
+          (0 until n).par.forall(j => mt(i)(j) == thatData(i)(j))
         })
-        true
     }
 
     def transpose: DenseMatrix = {
@@ -59,7 +58,27 @@ object Matrix extends App {
       new DenseMatrix(newMatrix)
     }
 
-    def determinant: Int = ???
+    def determinant: Int = {
+      if m != n then throw Exception("Has to be a square matrix!")
+      else
+        //Gaussian elimination
+        val copyMatrix = mt.clone()
+        (0 until n).foreach(i => {
+          ((i+1) until n).foreach(j => {
+            val ratio = copyMatrix(j)(i)/copyMatrix(i)(i)
+            copyMatrix(j)(i) = 0
+            (i+1 until n).foreach(k => {
+              copyMatrix(j)(k) -= ratio*copyMatrix(i)(k)
+            })
+          })
+        })
+
+        (0 until n).par.flatMap(i => {
+          (0 until n).par.map(k => if i == k then copyMatrix(i)(k) else 1
+          )
+        }).product
+
+    }
 
     def isSymmetric: Boolean = transpose == this
 
@@ -186,7 +205,7 @@ object Matrix extends App {
   val mt2 = ArrayBuffer.fill(2048,2048)(5)
   val mt3 = ArrayBuffer.tabulate(50)(i => ArrayBuffer.tabulate(30)(j => (i+1)*(j+2)))
   val mt4 = ArrayBuffer.tabulate(50)(i => ArrayBuffer.tabulate(30)(j => i+j))
-  val mt5 = ArrayBuffer(ArrayBuffer(1,2,3),ArrayBuffer(1,1,7),ArrayBuffer(1,12,3))
+  val mt5 = ArrayBuffer(ArrayBuffer(1,2,3,5),ArrayBuffer(1,1,7,6),ArrayBuffer(1,12,3,7),ArrayBuffer(1,2,3,9))
   val mt6 = ArrayBuffer(ArrayBuffer(1,0),ArrayBuffer(0,1))
   val mt7 = ArrayBuffer(ArrayBuffer(0,1),ArrayBuffer(1,0))
 
