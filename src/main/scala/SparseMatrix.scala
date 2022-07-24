@@ -81,6 +81,19 @@ class SparseMatrix(data: Map[(Int,Int),Int], n: Int, m: Int) {
   }
 
   /**
+   * Find trace of the sparse matrix
+   * @return trace of sparse matrix
+   */
+  def trace: Int = {
+    if colSize != rowSize then throw Exception("Has to be square matrix")
+    else
+      (0 until n).par.flatMap(i => {
+        (0 until n).par.map(k => if i == k && mt.contains((i,k)) then mt((i,k)) else 0
+        )
+      }).sum
+  }
+
+  /**
    * Transpose sparse matrices
    * @return transposed sparse matrix
    */

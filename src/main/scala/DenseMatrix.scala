@@ -8,7 +8,7 @@ class DenseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]) {
   private val n = mt.head.length
 
   /**
-   * Add two dense matrices 
+   * Add two dense matrices
    * @param that another dense matrix that is going to be added to
    * @return dense matrix added together
    */
@@ -69,6 +69,19 @@ class DenseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]) {
   }
 
   /**
+   * Find the trace of the dense matrix
+   * @return trace of dense matrix
+   */
+  def trace: Int = {
+    if n != m then throw Exception("Has to be square matrix")
+    else
+      (0 until n).par.flatMap(i => {
+        (0 until n).par.map(k => if i == k then mt(i)(k) else 0
+        )
+      }).sum
+  }
+
+  /**
    * Finds the determinant of dense matrix
    * @return determinant of dense matrix
    */
@@ -113,12 +126,16 @@ class DenseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]) {
   def isSkew: Boolean = !(transpose == this)
 
   /**
-   * Gets the element in the matrix with the specified row and column 
-   * @param row the row 
+   * Gets the element in the matrix with the specified row and column
+   * @param row the row
    * @param col the column
    * @return the element in specified row and column
    */
-  def entryAt(row: Int, col: Int): Int = mt(row)(col)
+  def entryAt(row: Int, col: Int): Int = {
+    if row < m && col < n then
+      mt(row)(col)
+    else throw Exception("Coordinate out of bounds!")
+  }
 
   /**
    * Checks if dense matrix is invertible

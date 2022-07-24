@@ -7,7 +7,12 @@ import scala.collection.mutable.ArrayBuffer
 
 object Matrix extends App {
 
-  def computeSparseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]): Map[(Int,Int), Int] = {
+  /**
+   * Converts 2D array matrix into sparse matrix in DOK representation
+   * @param data 2D array matrix
+   * @return sparse matrix class
+   */
+  def computeSparseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]): SparseMatrix = {
     val m = data.length
     val n = data.head.length
     val mp = mutable.Map[(Int,Int),Int]()
@@ -17,13 +22,17 @@ object Matrix extends App {
         if elem != 0 then mp.addOne((i,j) -> elem)
       })
     })
-    mp.toMap
+    SparseMatrix(mp.toMap,n,m)
   }
 
 
-  def createIdentity(k: Int): DenseMatrix = {
-    val res = ArrayBuffer.tabulate(k)(j => ArrayBuffer.tabulate(k)(i => if i == j then 1 else 0))
-    DenseMatrix(res)
+  /**
+   * Creates identity matrix with size k x k
+   * @param k size for identity matrix
+   * @return identity matrix in 2D array
+   */
+  def createIdentity(k: Int): ArrayBuffer[ArrayBuffer[Int]] = {
+    ArrayBuffer.tabulate(k)(j => ArrayBuffer.tabulate(k)(i => if i == j then 1 else 0))
   }
 
 
@@ -46,12 +55,13 @@ object Matrix extends App {
   val sm1 = ArrayBuffer(ArrayBuffer(1,0),ArrayBuffer(0,1),ArrayBuffer(1,1))
   val sm2 = ArrayBuffer(ArrayBuffer(0,1),ArrayBuffer(1,0))
 
-  val s1 = new SparseMatrix(Matrix.computeSparseMatrix(sm1), sm1.head.length, sm1.length)
-  val s2 = new SparseMatrix(Matrix.computeSparseMatrix(sm2), sm2.head.length, sm2.length)
+  val s1 = computeSparseMatrix(sm1)
+  val s2 = computeSparseMatrix(sm2)
 
   println(s1.getMatrix)
   //println(s1.transpose.getMatrix)
   println(s2.getMatrix)
+  println("Tace is: " + s2.trace)
   //println(s2.transpose.getMatrix)
   //println((s1 + s2).getMatrix)
 
@@ -65,13 +75,14 @@ object Matrix extends App {
   //println("Runtime: " + end1)
   //println(addition.getMatrixArray)
 
-  println(Matrix.createIdentity(5).getMatrix)
+  println(Matrix.createIdentity(5))
 
 
   //println(m3 == m1)
   println(m5.determinant)
   println(m5.inverse.getMatrix)
   println(m5.transpose.getMatrix)
+  println(m5.transpose.trace)
 
   //println((m2 * m1).getMatrixArray)
 
