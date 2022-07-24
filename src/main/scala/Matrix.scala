@@ -69,8 +69,6 @@ object Matrix extends App {
   println(m5.inverse.getMatrixArray)
   println(m5.transpose.getMatrixArray)
 
-
-
   //println((m2 * m1).getMatrixArray)
 
 

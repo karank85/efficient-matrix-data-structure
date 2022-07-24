@@ -3,7 +3,6 @@ import java.util.concurrent.atomic.AtomicInteger
 import scala.collection.mutable
 import scala.jdk.CollectionConverters._
 import scala.collection.parallel.CollectionConverters.*
-
 import scala.collection.mutable.ArrayBuffer
 
 class SparseMatrix(data: mutable.Map[(Int,Int),Int], n: Int, m: Int) {

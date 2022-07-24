@@ -7,6 +7,11 @@ class DenseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]) {
   private val m = mt.length
   private val n = mt.head.length
 
+  /**
+   * Add two dense matrices 
+   * @param that another dense matrix that is going to be added to
+   * @return dense matrix added together
+   */
   def +(that: DenseMatrix): DenseMatrix = {
     if n == that.n && m == that.m then
       val thatData = that.mt
@@ -18,6 +23,11 @@ class DenseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]) {
 
   }
 
+  /**
+   * Multiply two dense matrices
+   * @param that another dense matrix that is going to be multiplied to
+   * @return dense matrix multiplied together
+   */
   def *(that: DenseMatrix): DenseMatrix = {
     // check this.n == that.m
     if n == that.m then
@@ -33,6 +43,11 @@ class DenseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]) {
     else throw Exception("Can't be multiplied!")
   }
 
+  /**
+   * Check if two dense matrices are equal
+   * @param that dense matrix being compared to
+   * @return boolean that tells if the matrices are equal
+   */
   def ==(that: DenseMatrix): Boolean = {
     if n != that.n || m != that.m then false
     else
@@ -42,6 +57,10 @@ class DenseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]) {
       })
   }
 
+  /**
+   * Transpose a dense matrix
+   * @return transposed dense matrix
+   */
   def transpose: DenseMatrix = {
     val newMatrix = (0 until m).par.map(i => {
       (0 until n).par.map(j => mt(j)(i)).to(ArrayBuffer)
@@ -49,6 +68,10 @@ class DenseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]) {
     new DenseMatrix(newMatrix)
   }
 
+  /**
+   * Finds the determinant of dense matrix
+   * @return determinant of dense matrix
+   */
   def determinant: Int = {
 
     def gaussElim(): ArrayBuffer[ArrayBuffer[Int]] = {
@@ -77,14 +100,36 @@ class DenseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]) {
 
   }
 
+  /**
+   * Check ifs a dense matrix is symmetric
+   * @return boolean if dense is symmetric
+   */
   def isSymmetric: Boolean = transpose == this
 
+  /**
+   * Check ifs a dense matrix is skew
+   * @return boolean if dense is skew
+   */
   def isSkew: Boolean = !(transpose == this)
 
+  /**
+   * Gets the element in the matrix with the specified row and column 
+   * @param row the row 
+   * @param col the column
+   * @return the element in specified row and column
+   */
   def entryAt(row: Int, col: Int): Int = mt(row)(col)
 
+  /**
+   * Checks if dense matrix is invertible
+   * @return boolean is dense matrix is invertible
+   */
   def isInvertible: Boolean = determinant != 0
 
+  /**
+   * Computes the inverse of the dense matrix
+   * @return inverse of dense matrix
+   */
   def inverse: DenseMatrix = {
     if isInvertible then
       val dt = 1/determinant
@@ -101,5 +146,6 @@ class DenseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]) {
     DenseMatrix(res)
   }
 
+  /** Returns the matrix data array */
   def getMatrixArray: ArrayBuffer[ArrayBuffer[Int]] = mt
 }
