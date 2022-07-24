@@ -2,7 +2,7 @@
 
 **Plan**: Create a matrix data type class with usual matrix operations which would be the methods of the class but for this project, the operations would be done using the idea of asynchronous and parallelism for faster and more efficient runtime performances.
 
-## **Goal / How will I measure success:**
+## **Goal:**
 
   ● Have a greater understanding of OOP & Functional Programming in Scala.
 
@@ -16,7 +16,7 @@ operations with clean and readable code.
   ● Able to Implement most of the complicated operations in parallel or
 asynchronous
 
-## **Matrix operations that are planned to be implemented / Rough plan:**
+## **Matrix operations implemented:**
 
 The operations will be implemented for Sparse matrices and Dense matrices
 
