@@ -7,20 +7,23 @@ import scala.collection.mutable.ArrayBuffer
 
 object Matrix extends App {
 
-  object SparseMatrix {
-
-    def computeSparseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]): Map[(Int,Int), Int] = {
-      val m = data.length
-      val n = data.head.length
-      val mp = mutable.Map[(Int,Int),Int]()
-      (0 until m).foreach(i => {
-        (0 until n).foreach(j => {
-          val elem = data(i)(j)
-          if elem != 0 then mp.addOne((i,j) -> elem)
-        })
+  def computeSparseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]): Map[(Int,Int), Int] = {
+    val m = data.length
+    val n = data.head.length
+    val mp = mutable.Map[(Int,Int),Int]()
+    (0 until m).foreach(i => {
+      (0 until n).foreach(j => {
+        val elem = data(i)(j)
+        if elem != 0 then mp.addOne((i,j) -> elem)
       })
-      mp.toMap
-    }
+    })
+    mp.toMap
+  }
+
+
+  def createIdentity(k: Int): DenseMatrix = {
+    val res = ArrayBuffer.tabulate(k)(j => ArrayBuffer.tabulate(k)(i => if i == j then 1 else 0))
+    DenseMatrix(res)
   }
 
 
@@ -43,8 +46,8 @@ object Matrix extends App {
   val sm1 = ArrayBuffer(ArrayBuffer(1,0),ArrayBuffer(0,1),ArrayBuffer(1,1))
   val sm2 = ArrayBuffer(ArrayBuffer(0,1),ArrayBuffer(1,0))
 
-  val s1 = new SparseMatrix(SparseMatrix.computeSparseMatrix(sm1), sm1.head.length, sm1.length)
-  val s2 = new SparseMatrix(SparseMatrix.computeSparseMatrix(sm2), sm2.head.length, sm2.length)
+  val s1 = new SparseMatrix(Matrix.computeSparseMatrix(sm1), sm1.head.length, sm1.length)
+  val s2 = new SparseMatrix(Matrix.computeSparseMatrix(sm2), sm2.head.length, sm2.length)
 
   println(s1.getMatrix)
   //println(s1.transpose.getMatrix)
@@ -61,6 +64,8 @@ object Matrix extends App {
   println((s1 * s2).getMatrix)
   //println("Runtime: " + end1)
   //println(addition.getMatrixArray)
+
+  println(Matrix.createIdentity(5).getMatrix)
 
 
   //println(m3 == m1)

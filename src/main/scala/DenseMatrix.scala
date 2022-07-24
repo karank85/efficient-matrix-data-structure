@@ -141,11 +141,6 @@ class DenseMatrix(data: ArrayBuffer[ArrayBuffer[Int]]) {
       throw Exception("Matrix is not invertible!")
   }
 
-  def createIdentity(k: Int): DenseMatrix = {
-    val res = ArrayBuffer.tabulate(k)(j => ArrayBuffer.tabulate(k)(i => if i == k then 1 else 0))
-    DenseMatrix(res)
-  }
-
   /** Returns the matrix data array */
   def getMatrix: ArrayBuffer[ArrayBuffer[Int]] = mt
 }
